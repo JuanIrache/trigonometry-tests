@@ -46,7 +46,50 @@ const projectedComponents = (a, b) => {
   return [lon, lat];
 };
 
-const a = [4, 2.5, 2.5];
-const b = [5, 0, 3.1];
+const a = [3.2, 7];
+const b = [8, 4];
 
-console.log(project(a, b));
+console.log('Projected vector 2D', project(a, b));
+
+const c = [4, 2.5, 2.5];
+const d = [5, 0, 3.1];
+
+console.log('Projected vector 3D', project(c, d));
+
+// Rotate a vector by an amount
+const rotate = (a, angle) => [
+  Math.cos(angle) * a[0] - Math.sin(angle) * a[1],
+  Math.sin(angle) * a[0] + Math.cos(angle) * a[1]
+];
+
+// Rotate one angle a to align it with another b (2D). Like moving the frame of coordinates to align with b
+// Many orders of magnitude faster than projectedComponents
+const alignAngles = (a, b) => {
+  const angleB = Math.atan2(b[1], b[0]);
+  return rotate(a, -angleB);
+};
+
+// Rotate (2D vectors) a to align it to b, then create separate vectors for its components and unrotate
+// Many orders of magnitude faster
+const projectFast = (a, b) => {
+  const angleB = Math.atan2(b[1], b[0]);
+  const alignedA = rotate(a, -angleB);
+  const unalignedAX = rotate([alignedA[0], 0], angleB);
+  const unalignedAY = rotate([0, alignedA[1]], angleB);
+  return [unalignedAX, unalignedAY];
+};
+
+// Benchmark
+// let t1 = Date.now();
+// let _;
+// for (let i = 0; i < 9999999; i++) {
+//   _ = projectFast(a, b);
+// }
+// console.log(Date.now() - t1);
+
+console.log('Projected vector 2D fast', projectFast(a, b));
+
+console.log('Projected components', projectedComponents(a, b));
+console.log('Projected components 2D fast', alignAngles(a, b));
+
+// Can the fast version be adapted to 3D?
