@@ -46,7 +46,7 @@ const projectedComponents = (a, b) => {
   return [lon, lat];
 };
 
-const a = [3.2, 7];
-const b = [8, 4];
+const a = [4, 2.5, 2.5];
+const b = [5, 0, 3.1];
 
 console.log(project(a, b));
