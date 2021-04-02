@@ -79,15 +79,26 @@ const projectFast = (a, b) => {
   return [unalignedAX, unalignedAY];
 };
 
-// Benchmark
+// Simplified projection based on https://chortle.ccsu.edu/VectorLessons/vch11/vch11_17.html
+// Only slightly faster computation
+
+const projectFast2 = (a, b) => {
+  const k = dotP(a, b) / dotP(b, b);
+  const kv = scale(b, k);
+  const u = subAB(a, kv);
+  return [kv, u];
+};
+
+// // Benchmark;
 // let t1 = Date.now();
 // let _;
 // for (let i = 0; i < 9999999; i++) {
-//   _ = projectFast(a, b);
+//   _ = projectFast2(a, b);
 // }
 // console.log(Date.now() - t1);
 
 console.log('Projected vector 2D fast', projectFast(a, b));
+console.log('Projected vector fast 2', projectFast2(a, b));
 
 console.log('Projected components', projectedComponents(a, b));
 console.log('Projected components 2D fast', alignAngles(a, b));
